@@ -53,7 +53,7 @@ class Agent():
             # If enough samples are available in memory, get random subset and learn
             if len(self.memory) > BATCH_SIZE:
                 experiences = self.memory.sample()
-                self.learn_DDQN_git(experiences, GAMMA)
+                self.learn_DDQN(experiences, GAMMA)
 
     def act(self, state, eps=0.):
         """Returns actions for given state as per current policy.
@@ -99,53 +99,11 @@ class Agent():
         loss.backward()
         self.optimizer.step()
         
-        ## TODO: compute and minimize the loss
-        "*** YOUR CODE HERE ***"
-
         # ------------------- update target network ------------------- #
         self.soft_update(self.qnetwork_local, self.qnetwork_target, TAU)  
         
+       
     def learn_DDQN(self, experiences, gamma):
-        """Update value parameters using given batch of experience tuples.
-
-        Params
-        ======
-            experiences (Tuple[torch.Variable]): tuple of (s, a, r, s', done) tuples 
-            gamma (float): discount factor
-        """
-        states, actions, rewards, next_states, dones = experiences
-        # Get index of maximum value for next state from Q_expected
-        Q_argmax = self.qnetwork_local(next_states).detach().argmax(1)
-        #print (self.qnetwork_local(states).detach())
-        #print (Q_argmax)
-        #print (Q_argmax.shape)
-        #input("Press Enter to continue...")
-        # Get max predicted Q values (for next states) from target model
-        Q_targets_next = self.qnetwork_target(next_states).detach()[0,Q_argmax].unsqueeze(1)
-        #print (Q_targets_next.shape)
-        #print (Q_targets_next)
-        #input("Press Enter to continue...")
-        # Compute Q targets for current states 
-        Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
-        #print (Q_targets.shape)
-        # Get expected Q values from local model
-        Q_expected = self.qnetwork_local(states).gather(1, actions)
-        #print (Q_expected.shape)
-        #input("Press Enter to continue...")
-        # Compute loss
-        loss = F.mse_loss(Q_expected, Q_targets)
-        # Minimize the loss
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
-        
-        ## TODO: compute and minimize the loss
-        "*** YOUR CODE HERE ***"
-
-        # ------------------- update target network ------------------- #
-        self.soft_update(self.qnetwork_local, self.qnetwork_target, TAU)  
-        
-    def learn_DDQN_git(self, experiences, gamma):
         """Update value parameters using given batch of experience tuples.
 
         Params
@@ -158,30 +116,21 @@ class Agent():
         Q_argmax = self.qnetwork_local(next_states).detach()
         _, a_prime = Q_argmax.max(1)
         #print (self.qnetwork_local(states).detach())
-        #print (Q_argmax)
-        #print (Q_argmax.shape)
-        #input("Press Enter to continue...")
         # Get max predicted Q values (for next states) from target model
         Q_targets_next = self.qnetwork_target(next_states).detach().gather(1, a_prime.unsqueeze(1))
         #print (Q_targets_next.shape)
-        #print (Q_targets_next)
-        #input("Press Enter to continue...")
         # Compute Q targets for current states 
         Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
         #print (Q_targets.shape)
         # Get expected Q values from local model
         Q_expected = self.qnetwork_local(states).gather(1, actions)
         #print (Q_expected.shape)
-        #input("Press Enter to continue...")
         # Compute loss
         loss = F.mse_loss(Q_expected, Q_targets)
         # Minimize the loss
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-        
-        ## TODO: compute and minimize the loss
-        "*** YOUR CODE HERE ***"
 
         # ------------------- update target network ------------------- #
         self.soft_update(self.qnetwork_local, self.qnetwork_target, TAU)  
