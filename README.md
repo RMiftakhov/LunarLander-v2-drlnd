@@ -1,5 +1,6 @@
 # LunarLander-v2-drlnd
 The solution for the LunarLander-v2 gym environment. 
+![LunarLander-gif](https://github.com/RMiftakhov/LunarLander-v2-drlnd/blob/master/LunarLander.gif)
 The code is based on materials from Udacity Deep Reinforcement Learning Nanodegree Program.
 
 ## Project Details
